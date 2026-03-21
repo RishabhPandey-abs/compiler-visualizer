@@ -89,7 +89,19 @@ string getType(const string& lex) {
 }
 
 // ---------------- LEXICAL ANALYSIS ----------------
+vector<Token> lexicalAnalysis(const string& code) {
+    vector<string> lexemes = tokenize(code);
+    vector<Token> result;
 
+    for (auto &lex : lexemes) {
+        Token t;
+        t.lexeme = lex;
+        t.type = getType(lex);
+        result.push_back(t);
+    }
+
+    return result;
+}
 
 // ---------------- MAIN COMPILER ----------------
 void runCompiler(string code) {
