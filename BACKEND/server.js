@@ -6,15 +6,15 @@ const app = express();
 
 app.use(express.json());
 
-// ✅ FIXED PATH
+//  FIXED PATH
 app.use(express.static(path.join(__dirname, "../public")));
 
-// ✅ Home route
+//  Home route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public", "index.html"));
 });
 
-// ✅ API
+//  API
 app.post("/run", (req, res) => {
   const code = req.body.code;
 
@@ -30,7 +30,7 @@ app.post("/run", (req, res) => {
   process.stdin.write(code);
   process.stdin.end();
 });
-// ✅ START SERVER
+//  START SERVER
 app.listen(5000, () => {
   console.log("Running at http://localhost:5000");
 

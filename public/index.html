@@ -1,118 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compiler Visualizer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compiler Visualizer</title>
 
-  <style>
-    body {
-      font-family: Consolas, monospace;
-      background: #1e1e1e;
-      color: #fff;
-    }
+<style>
+body {
+  font-family: Consolas, monospace;
+  background: #1e1e1e;
+  color: #fff;
+}
 
-    .container {
-      width: 80%;
-      margin: auto;
-      margin-top: 30px;
-    }
+.container {
+  width: 85%;
+  margin: auto;
+  margin-top: 30px;
+}
 
-    textarea {
-      width: 100%;
-      height: 150px;
-      padding: 10px;
-      background: #252526;
-      color: #fff;
-      border: none;
-    }
+textarea {
+  width: 100%;
+  height: 160px;
+  padding: 10px;
+  background: #252526;
+  color: #fff;
+  border: none;
+  resize: vertical;
+}
 
-    button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: #007acc;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #007acc;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
 
-    .section {
-      margin-top: 20px;
-      background: #252526;
-      padding: 15px;
-      border-radius: 5px;
-    }
+button:hover {
+  background:#005a9e;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
+.section {
+  margin-top: 20px;
+  background: #252526;
+  padding: 15px;
+  border-radius: 6px;
+}
 
-    th, td {
-      border: 1px solid #444;
-      padding: 8px;
-      text-align: left;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
 
-    th {
-      background: #333;
-    }
+th, td {
+  border: 1px solid #444;
+  padding: 8px;
+}
 
-    .keyword { color: #569cd6; }
-    .identifier { color: #9cdcfe; }
-    .number { color: #b5cea8; }
-    .operator { color: #d4d4d4; }
-    .delimiter { color: #dcdcaa; }
-    .invalid { color: red; }
-    .lex { color: #c586c0; }          
-    .regex { color: #d16969; }        
-    .preprocessor { color: #c586c0; } 
-    .operator { color: #d4d4d4; }     
-    .string { color: #ce9178; }       
-    .header { color: #4ec9b0; }       
-    .comment { color: #6a9955; } 
+th {
+  background: #333;
+}
 
-    pre {
-      background: #111;
-      padding: 10px;
-    }
-  </style>
+/* Token Colors */
+.keyword { color: #569cd6; }
+.identifier { color: #9cdcfe; }
+.number { color: #b5cea8; }
+.operator { color: #d4d4d4; }
+.delimiter { color: #dcdcaa; }
+.invalid { color: red; }
+
+/* Tree */
+.tree {
+  background: #111;
+  padding: 10px;
+  white-space: pre;
+  border-left: 4px solid #007acc;
+  border-radius: 4px;
+}
+
+/* Code blocks */
+pre {
+  background: #111;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
-  <h1>Compiler Visualizer</h1>
+<h1>Compiler Visualizer</h1>
 
-  <textarea id="code" placeholder="Enter C code..."></textarea>
-  <button onclick="runCompiler()">Run</button>
+<textarea id="code" placeholder="Enter C-like code..."></textarea>
+<button onclick="runCompiler()">Run</button>
 
-  <!-- LEXEMES -->
-  <div class="section">
-    <h3>Lexemes</h3>
-    <ul id="lexemeList"></ul>
-  </div>
+<!-- LEXEMES -->
+<div class="section">
+<h3>Lexemes</h3>
+<ul id="lexemeList"></ul>
+</div>
 
-  <!-- TOKENS -->
-  <div class="section">
-    <h3>Tokens</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Lexeme</th>
-          <th>Token Type</th>
-        </tr>
-      </thead>
-      <tbody id="tokenTable"></tbody>
-    </table>
-  </div>
+<!-- TOKENS -->
+<div class="section">
+<h3>Tokens</h3>
+<table>
+<thead>
+<tr>
+<th>Lexeme</th>
+<th>Token Type</th>
+</tr>
+</thead>
+<tbody id="tokenTable"></tbody>
+</table>
+</div>
 
-  <!-- OTHER OUTPUT -->
-  <div class="section">
-    <h3>Other Analysis</h3>
-    <pre id="output"></pre>
-  </div>
+<!-- PARSE TREE -->
+<div class="section">
+<h3>Final Parse Tree</h3>
+<div id="parseTree"></div>
+</div>
+
+<!-- INTERMEDIATE -->
+<div class="section">
+<h3>Intermediate Code</h3>
+<pre id="ic"></pre>
+</div>
+
+<!-- OPTIMIZED -->
+<div class="section">
+<h3>Optimized Code</h3>
+<pre id="opt"></pre>
+</div>
+
+<!-- FINAL -->
+<div class="section">
+<h3>Final Code</h3>
+<pre id="final"></pre>
+</div>
+
+<!-- OTHER -->
+<div class="section">
+<h3>Messages</h3>
+<pre id="output"></pre>
+</div>
 
 </div>
 
@@ -123,92 +157,113 @@ async function runCompiler() {
   try {
     const res = await fetch("/run", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code })
     });
 
-    if (!res.ok) {
-      throw new Error("Server error");
-    }
-
     const data = await res.json();
-
     parseOutput(data.output);
 
   } catch (err) {
     document.getElementById("output").textContent =
-      "❌ Error: Server not responding or crashed.\n" + err.message;
+      "❌ Server Error\n" + err.message;
   }
 }
 
-// 🔥 Parse backend output and display nicely
 function parseOutput(output) {
+
   const lines = output.split("\n");
 
   const lexemeList = document.getElementById("lexemeList");
   const tokenTable = document.getElementById("tokenTable");
+  const parseTree = document.getElementById("parseTree");
+  const ic = document.getElementById("ic");
+  const opt = document.getElementById("opt");
+  const final = document.getElementById("final");
   const other = document.getElementById("output");
 
-  // ✅ Reset UI properly
+  // Reset
   lexemeList.innerHTML = "";
   tokenTable.innerHTML = "";
+  parseTree.innerHTML = "";
+  ic.textContent = "";
+  opt.textContent = "";
+  final.textContent = "";
   other.textContent = "";
 
   let mode = "";
+  let treeBuffer = "";
 
   lines.forEach(line => {
+    const raw = line;
     line = line.trim();
 
-    if (line === "=== LEXEMES ===") {
-      mode = "lexeme";
-      return;
-    }
-
-    if (line === "=== TOKENS ===") {
-      mode = "token";
-      return;
-    }
+    // MODES
+    if (line === "=== TOKENS ===") { mode = "token"; return; }
+    if (line === "=== FINAL PARSE TREE ===") { mode = "tree"; return; }
+    if (line === "=== INTERMEDIATE CODE ===") { mode = "ic"; return; }
+    if (line === "=== OPTIMIZED CODE ===") { mode = "opt"; return; }
+    if (line === "=== FINAL CODE ===") { mode = "final"; return; }
 
     if (line.startsWith("===")) {
       mode = "other";
-      other.textContent += line + "\n";
       return;
     }
 
-    // -------- LEXEMES --------
-    if (mode === "lexeme" && line !== "") {
+    // TOKENS
+    if (mode === "token" && line !== "") {
+      const parts = line.split("->");
+      if (parts.length < 2) return;
+
+      const lex = parts[0].trim();
+      const type = parts[1].trim();
+
       const li = document.createElement("li");
-      li.textContent = line;
+      li.textContent = lex;
       lexemeList.appendChild(li);
-    }
-
-    // -------- TOKENS --------
-    else if (mode === "token" && line !== "" && !line.includes("LEXEME") && !line.includes("---")) {
-      
-      // ✅ Split ONLY first word (lexeme) and rest (type)
-      const firstSpace = line.indexOf(" ");
-      if (firstSpace === -1) return;
-
-      const lex = line.substring(0, firstSpace).trim();
-      const type = line.substring(firstSpace).trim();
 
       const row = document.createElement("tr");
-
       row.innerHTML = `
         <td>${lex}</td>
         <td class="${type.toLowerCase()}">${type}</td>
       `;
-
       tokenTable.appendChild(row);
     }
 
-    // -------- OTHER OUTPUT --------
-    else if (mode === "other") {
-      other.textContent += line + "\n";
+    // TREE
+    else if (mode === "tree") {
+      treeBuffer += raw + "\n";
     }
+
+    // IC
+    else if (mode === "ic") {
+      ic.textContent += raw + "\n";
+    }
+
+    // OPT
+    else if (mode === "opt") {
+      opt.textContent += raw + "\n";
+    }
+
+    // FINAL
+    else if (mode === "final") {
+      final.textContent += raw + "\n";
+    }
+
+    // OTHER
+    else {
+      other.textContent += raw + "\n";
+    }
+
   });
+
+  // Render tree
+  if (treeBuffer.trim() !== "") {
+    const div = document.createElement("div");
+    div.className = "tree";
+    div.textContent = treeBuffer;
+    parseTree.appendChild(div);
+  }
 }
 </script>
 
