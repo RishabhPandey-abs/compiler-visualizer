@@ -7,14 +7,14 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compiler Visualizer</title>
+<title>Compiler Phases Visualizer</title>
 
 <style>
 
 body{
     font-family: Consolas, monospace;
-    background:#1e1e1e;
-    color:white;
+    background:#0a90bc;
+    color:rgb(0, 0, 0);
     margin:0;
     padding:0;
 }
@@ -40,8 +40,8 @@ h3{
 textarea{
     width:100%;
     height:220px;
-    background:#252526;
-    color:white;
+    background:#ffffff;
+    color:rgb(18, 18, 18);
     border:none;
     outline:none;
     padding:15px;
@@ -69,14 +69,14 @@ button:hover{
 
 .section{
     margin-top:25px;
-    background:#252526;
+    background:#ffffff;
     padding:20px;
     border-radius:8px;
     overflow-x:auto;
 }
 
 pre{
-    background:#111;
+    background:#ffffff;
     padding:15px;
     border-radius:5px;
     overflow-x:auto;
@@ -88,7 +88,7 @@ table{
     width:100%;
     border-collapse:collapse;
     margin-top:10px;
-    background:#1b1b1b;
+    background:hsl(0, 0%, 100%);
     overflow:hidden;
     border-radius:6px;
 }
@@ -108,50 +108,50 @@ td{
 }
 
 tr:nth-child(even){
-    background:#252526;
+    background:#ffffff;
 }
 
 tr:hover{
-    background:#333;
+    background:#f65d5d;
 }
 
 /* TOKEN COLORS */
 
 .keyword{
-    color:#569cd6;
+    color:#2e6593;
     font-weight:bold;
 }
 
 .identifier{
-    color:#9cdcfe;
+    color:#317295;
 }
 
 .number{
-    color:#b5cea8;
+    color:#4f9927;
 }
 
 .operator{
-    color:#d4d4d4;
+    color:#ab2d2d;
 }
 
 .delimiter{
-    color:#dcdcaa;
+    color:#aeae2d;
 }
 
 .string{
-    color:#ce9178;
+    color:#bf572d;
 }
 
 .comment{
-    color:#6a9955;
+    color:#49a51f;
 }
 
 .preprocessor{
-    color:#c586c0;
+    color:#aa2ea0;
 }
 
 .header{
-    color:#4ec9b0;
+    color:#29a189;
 }
 
 .invalid{
@@ -162,7 +162,7 @@ tr:hover{
 /* TREE */
 
 .tree{
-    background:#111;
+    background:#ffffff;
     padding:15px;
     border-left:4px solid #007acc;
     border-radius:5px;
@@ -203,7 +203,7 @@ tr:hover{
 
 <div class="container">
 
-<h1>Compiler Visualizer</h1>
+<h1>Compiler Phases Visualizer</h1>
 
 <textarea id="code" placeholder="Enter C/C++ code here..."></textarea>
 
