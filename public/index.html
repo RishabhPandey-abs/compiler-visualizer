@@ -1,271 +1,579 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Compiler Visualizer</title>
 
 <style>
-body {
-  font-family: Consolas, monospace;
-  background: #1e1e1e;
-  color: #fff;
+
+body{
+    font-family: Consolas, monospace;
+    background:#1e1e1e;
+    color:white;
+    margin:0;
+    padding:0;
 }
 
-.container {
-  width: 85%;
-  margin: auto;
-  margin-top: 30px;
+.container{
+    width:90%;
+    margin:auto;
+    margin-top:20px;
+    margin-bottom:40px;
 }
 
-textarea {
-  width: 100%;
-  height: 160px;
-  padding: 10px;
-  background: #252526;
-  color: #fff;
-  border: none;
-  resize: vertical;
+h1{
+    text-align:center;
+    color:#4fc3f7;
+    margin-bottom:20px;
 }
 
-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background: #007acc;
-  color: white;
-  border: none;
-  cursor: pointer;
+h3{
+    color:#4fc3f7;
+    margin-bottom:15px;
 }
 
-button:hover {
-  background:#005a9e;
+textarea{
+    width:100%;
+    height:220px;
+    background:#252526;
+    color:white;
+    border:none;
+    outline:none;
+    padding:15px;
+    font-size:15px;
+    border-radius:8px;
+    resize:none;
+    box-sizing:border-box;
 }
 
-.section {
-  margin-top: 20px;
-  background: #252526;
-  padding: 15px;
-  border-radius: 6px;
+button{
+    margin-top:15px;
+    padding:12px 25px;
+    background:#007acc;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+button:hover{
+    background:#005f9e;
 }
 
-th, td {
-  border: 1px solid #444;
-  padding: 8px;
+.section{
+    margin-top:25px;
+    background:#252526;
+    padding:20px;
+    border-radius:8px;
+    overflow-x:auto;
 }
 
-th {
-  background: #333;
+pre{
+    background:#111;
+    padding:15px;
+    border-radius:5px;
+    overflow-x:auto;
+    white-space:pre-wrap;
+    line-height:1.5;
 }
 
-/* Token Colors */
-.keyword { color: #569cd6; }
-.identifier { color: #9cdcfe; }
-.number { color: #b5cea8; }
-.operator { color: #d4d4d4; }
-.delimiter { color: #dcdcaa; }
-.invalid { color: red; }
-
-/* Tree */
-.tree {
-  background: #111;
-  padding: 10px;
-  white-space: pre;
-  border-left: 4px solid #007acc;
-  border-radius: 4px;
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+    background:#1b1b1b;
+    overflow:hidden;
+    border-radius:6px;
 }
 
-/* Code blocks */
-pre {
-  background: #111;
-  padding: 10px;
-  border-radius: 4px;
-  overflow-x: auto;
+th{
+    background:#007acc;
+    color:white;
+    padding:12px;
+    text-align:left;
+    font-size:15px;
 }
+
+td{
+    padding:10px;
+    border-bottom:1px solid #333;
+    font-size:14px;
+}
+
+tr:nth-child(even){
+    background:#252526;
+}
+
+tr:hover{
+    background:#333;
+}
+
+/* TOKEN COLORS */
+
+.keyword{
+    color:#569cd6;
+    font-weight:bold;
+}
+
+.identifier{
+    color:#9cdcfe;
+}
+
+.number{
+    color:#b5cea8;
+}
+
+.operator{
+    color:#d4d4d4;
+}
+
+.delimiter{
+    color:#dcdcaa;
+}
+
+.string{
+    color:#ce9178;
+}
+
+.comment{
+    color:#6a9955;
+}
+
+.preprocessor{
+    color:#c586c0;
+}
+
+.header{
+    color:#4ec9b0;
+}
+
+.invalid{
+    color:red;
+    font-weight:bold;
+}
+
+/* TREE */
+
+.tree{
+    background:#111;
+    padding:15px;
+    border-left:4px solid #007acc;
+    border-radius:5px;
+    white-space:pre;
+    overflow-x:auto;
+    min-height:80px;
+}
+
+/* LEXEME LIST */
+
+#lexemeList{
+    columns:4;
+    -webkit-columns:4;
+    -moz-columns:4;
+}
+
+#lexemeList li{
+    margin-bottom:6px;
+}
+
+/* ERROR */
+
+.errorBox{
+    color:#ff6b6b;
+    font-weight:bold;
+}
+
+.success{
+    color:#7CFC00;
+    font-weight:bold;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
+
 <h1>Compiler Visualizer</h1>
 
-<textarea id="code" placeholder="Enter C-like code..."></textarea>
-<button onclick="runCompiler()">Run</button>
+<textarea id="code" placeholder="Enter C/C++ code here..."></textarea>
+
+<button onclick="runCompiler()">Run Compiler</button>
 
 <!-- LEXEMES -->
+
 <div class="section">
+
 <h3>Lexemes</h3>
+
 <ul id="lexemeList"></ul>
+
 </div>
 
 <!-- TOKENS -->
+
 <div class="section">
+
 <h3>Tokens</h3>
-<table>
+
+<table id="tokenTable">
+
 <thead>
+
 <tr>
 <th>Lexeme</th>
 <th>Token Type</th>
 </tr>
+
 </thead>
-<tbody id="tokenTable"></tbody>
+
+<tbody>
+</tbody>
+
 </table>
+
 </div>
 
-<!-- PARSE TREE -->
+<!-- PARSE TREE STEPS -->
+
 <div class="section">
+
+<h3>Parse Tree Steps</h3>
+
+<pre id="steps" class="tree"></pre>
+
+</div>
+
+<!-- FINAL PARSE TREE -->
+
+<div class="section">
+
 <h3>Final Parse Tree</h3>
-<div id="parseTree"></div>
+
+<div id="tree" class="tree"></div>
+
 </div>
 
-<!-- INTERMEDIATE -->
+<!-- INTERMEDIATE CODE -->
+
 <div class="section">
+
 <h3>Intermediate Code</h3>
+
 <pre id="ic"></pre>
+
 </div>
 
-<!-- OPTIMIZED -->
+<!-- OPTIMIZED CODE -->
+
 <div class="section">
+
 <h3>Optimized Code</h3>
+
 <pre id="opt"></pre>
+
 </div>
 
-<!-- FINAL -->
+<!-- FINAL CODE -->
+
 <div class="section">
+
 <h3>Final Code</h3>
+
 <pre id="final"></pre>
+
 </div>
 
-<!-- OTHER -->
+<!-- ERRORS / MESSAGES -->
+
 <div class="section">
-<h3>Messages</h3>
-<pre id="output"></pre>
+
+<h3>Messages / Errors</h3>
+
+<pre id="output" class="errorBox"></pre>
+
 </div>
 
 </div>
 
 <script>
-async function runCompiler() {
-  const code = document.getElementById("code").value;
 
-  try {
-    const res = await fetch("/run", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code })
+// =====================================
+// CLEAR ALL OUTPUT
+// =====================================
+
+function clearAll(){
+
+    document.getElementById("lexemeList").innerHTML = "";
+
+    document.querySelector("#tokenTable tbody").innerHTML = "";
+
+    document.getElementById("steps").textContent = "";
+
+    document.getElementById("tree").textContent = "";
+
+    document.getElementById("ic").textContent = "";
+
+    document.getElementById("opt").textContent = "";
+
+    document.getElementById("final").textContent = "";
+
+    document.getElementById("output").textContent = "";
+}
+
+// =====================================
+// RUN COMPILER
+// =====================================
+
+async function runCompiler(){
+
+    clearAll();
+
+    const code =
+        document.getElementById("code").value;
+
+    // Empty Input Check
+
+    if(code.trim() === ""){
+
+        document.getElementById("output").textContent =
+            "❌ Please enter code";
+
+        return;
+    }
+
+    try{
+
+        const res = await fetch("/run",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({code})
+        });
+
+        const data = await res.json();
+
+        parseOutput(data.output);
+    }
+
+    catch(err){
+
+        document.getElementById("output").textContent =
+            "❌ Server Error\n" + err.message;
+    }
+}
+
+// =====================================
+// PARSE OUTPUT
+// =====================================
+
+function parseOutput(output){
+
+    const lines = output.split("\n");
+
+    const lexemeList =
+        document.getElementById("lexemeList");
+
+    const tokenTable =
+        document.querySelector("#tokenTable tbody");
+
+    const steps =
+        document.getElementById("steps");
+
+    const tree =
+        document.getElementById("tree");
+
+    const ic =
+        document.getElementById("ic");
+
+    const opt =
+        document.getElementById("opt");
+
+    const finalCode =
+        document.getElementById("final");
+
+    const other =
+        document.getElementById("output");
+
+    let mode = "";
+
+    lines.forEach(line => {
+
+        const raw = line;
+
+        const trimmed = line.trim();
+
+        // =============================
+        // SECTION DETECTION
+        // =============================
+
+        if(trimmed === "=== TOKENS ==="){
+            mode = "tokens";
+            return;
+        }
+
+        if(trimmed === "=== PARSE TREE STEPS ==="){
+            mode = "steps";
+            return;
+        }
+
+        if(trimmed === "=== FINAL PARSE TREE ==="){
+            mode = "tree";
+            return;
+        }
+
+        if(trimmed === "=== INTERMEDIATE CODE ==="){
+            mode = "ic";
+            return;
+        }
+
+        if(trimmed === "=== OPTIMIZED CODE ==="){
+            mode = "opt";
+            return;
+        }
+
+        if(trimmed === "=== FINAL CODE ==="){
+            mode = "final";
+            return;
+        }
+
+        if(trimmed === "=== ERRORS ==="){
+            mode = "errors";
+            return;
+        }
+
+        // Ignore Headings
+
+        if(trimmed.startsWith("===")){
+            return;
+        }
+
+        // =============================
+        // TOKENS
+        // =============================
+
+        if(mode === "tokens" && trimmed !== ""){
+
+            const parts = raw.split("->");
+
+            if(parts.length === 2){
+
+                const lex = parts[0].trim();
+
+                const type = parts[1].trim();
+
+                // LEXEME LIST
+
+                const li = document.createElement("li");
+
+                li.textContent = lex;
+
+                lexemeList.appendChild(li);
+
+                // TOKEN TABLE
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${lex}</td>
+                    <td class="${type.toLowerCase()}">${type}</td>
+                `;
+
+                tokenTable.appendChild(row);
+            }
+        }
+
+        // =============================
+        // PARSE TREE STEPS
+        // =============================
+
+        else if(mode === "steps"){
+
+            steps.textContent += raw + "\n";
+        }
+
+        // =============================
+        // FINAL PARSE TREE
+        // =============================
+
+        else if(mode === "tree"){
+
+            tree.textContent += raw + "\n";
+        }
+
+        // =============================
+        // INTERMEDIATE CODE
+        // =============================
+
+        else if(mode === "ic"){
+
+            ic.textContent += raw + "\n";
+        }
+
+        // =============================
+        // OPTIMIZED CODE
+        // =============================
+
+        else if(mode === "opt"){
+
+            opt.textContent += raw + "\n";
+        }
+
+        // =============================
+        // FINAL CODE
+        // =============================
+
+        else if(mode === "final"){
+
+            finalCode.textContent += raw + "\n";
+        }
+
+        // =============================
+        // ERRORS
+        // =============================
+
+        else if(mode === "errors"){
+
+            other.textContent += "❌ " + raw + "\n";
+        }
     });
 
-    const data = await res.json();
-    parseOutput(data.output);
+    // =====================================
+    // SUCCESS MESSAGE
+    // =====================================
 
-  } catch (err) {
-    document.getElementById("output").textContent =
-      "❌ Server Error\n" + err.message;
-  }
+    if(other.textContent.trim() === ""){
+
+        other.classList.remove("errorBox");
+
+        other.classList.add("success");
+
+        other.textContent =
+            "✔ Compilation Successful";
+    }
+    else{
+
+        other.classList.remove("success");
+
+        other.classList.add("errorBox");
+    }
 }
 
-function parseOutput(output) {
-
-  const lines = output.split("\n");
-
-  const lexemeList = document.getElementById("lexemeList");
-  const tokenTable = document.getElementById("tokenTable");
-  const parseTree = document.getElementById("parseTree");
-  const ic = document.getElementById("ic");
-  const opt = document.getElementById("opt");
-  const final = document.getElementById("final");
-  const other = document.getElementById("output");
-
-  // Reset
-  lexemeList.innerHTML = "";
-  tokenTable.innerHTML = "";
-  parseTree.innerHTML = "";
-  ic.textContent = "";
-  opt.textContent = "";
-  final.textContent = "";
-  other.textContent = "";
-
-  let mode = "";
-  let treeBuffer = "";
-
-  lines.forEach(line => {
-    const raw = line;
-    line = line.trim();
-
-    // MODES
-    if (line === "=== TOKENS ===") { mode = "token"; return; }
-    if (line === "=== FINAL PARSE TREE ===") { mode = "tree"; return; }
-    if (line === "=== INTERMEDIATE CODE ===") { mode = "ic"; return; }
-    if (line === "=== OPTIMIZED CODE ===") { mode = "opt"; return; }
-    if (line === "=== FINAL CODE ===") { mode = "final"; return; }
-
-    if (line.startsWith("===")) {
-      mode = "other";
-      return;
-    }
-
-    // TOKENS
-    if (mode === "token" && line !== "") {
-      const parts = line.split("->");
-      if (parts.length < 2) return;
-
-      const lex = parts[0].trim();
-      const type = parts[1].trim();
-
-      const li = document.createElement("li");
-      li.textContent = lex;
-      lexemeList.appendChild(li);
-
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${lex}</td>
-        <td class="${type.toLowerCase()}">${type}</td>
-      `;
-      tokenTable.appendChild(row);
-    }
-
-    // TREE
-    else if (mode === "tree") {
-      treeBuffer += raw + "\n";
-    }
-
-    // IC
-    else if (mode === "ic") {
-      ic.textContent += raw + "\n";
-    }
-
-    // OPT
-    else if (mode === "opt") {
-      opt.textContent += raw + "\n";
-    }
-
-    // FINAL
-    else if (mode === "final") {
-      final.textContent += raw + "\n";
-    }
-
-    // OTHER
-    else {
-      other.textContent += raw + "\n";
-    }
-
-  });
-
-  // Render tree
-  if (treeBuffer.trim() !== "") {
-    const div = document.createElement("div");
-    div.className = "tree";
-    div.textContent = treeBuffer;
-    parseTree.appendChild(div);
-  }
-}
 </script>
 
 </body>
+
 </html>
